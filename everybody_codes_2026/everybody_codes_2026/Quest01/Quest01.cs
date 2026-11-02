@@ -1,4 +1,4 @@
-namespace everybody_codes_2026;
+namespace everybody_codes_2026.Quest01;
 
 public class Quest01
 {
