@@ -1,6 +1,6 @@
-namespace everybody_codes_2026.Quest02;
+namespace everybody_codes_2026.Quest0;
 
-public class Quest02
+public class Quest0
 {
     public async Task<double> Part1(string filename)
     {
