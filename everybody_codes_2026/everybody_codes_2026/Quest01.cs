@@ -37,4 +37,23 @@ public class Quest01
             
         return total;
     }
+    
+    public async Task<double> Part3(string filename)
+    {
+        var contents = await File.ReadAllTextAsync(filename);
+
+        // Precompute frame sizes.
+        var frameSizes = Enumerable
+            .Range(3, 1000000)
+            .Where(i => i % 2 == 1)
+            .Select(w => Math.Pow(w, 2) - 1)
+            .ToArray();
+
+        var total = contents
+            .Split(",")
+            .Select(int.Parse)
+            .Sum(c => frameSizes.First(fs => fs >= c) - c);
+            
+        return total;
+    }
 }
