@@ -1,56 +1,71 @@
 namespace everybody_codes_2026.Quest03;
 
-public class Quest03
+public class Quest03 : IQuest
 {
     public async Task<double> Part1(string filename)
     {
         var votes = await File.ReadAllLinesAsync(filename);
 
         var total = 0D;
-
         foreach (var vote in votes)
         {
-            var standard = vote.Split(' ')[0][4..].ToCharArray();
-            var value = vote.Split(' ')[1].ToCharArray();
-            var index = Enumerable.Range(0, 4).Reverse().ToArray();
+            var standard = vote.Split(' ')[0][4..].Select(c => c - '0');
+            var value = vote.Split(' ')[1].Select(c => c - '0');
 
-            foreach (var (s, multiplier, i) in standard.Zip(value, index))
-                total += (multiplier - '0') * Math.Pow(s - '0', i);
+            foreach (var (s, multiplier, power) in standard.Zip(value, CountDownFrom(3)))
+                total += multiplier * Math.Pow(s, power);
         }
         
         return total;
+    }
+
+    private static IEnumerable<int> CountDownFrom(int startValue)
+    {
+        while (true)
+        {
+            yield return startValue--;
+        }
+    }
+    
+    private static IEnumerable<int> CountUpFrom(int startValue)
+    {
+        while (true)
+        {
+            yield return startValue++;
+        }
     }
     
     public async Task<double> Part2(string filename)
     {
         var votes = await File.ReadAllLinesAsync(filename);
-
         var total = 0D;
 
         foreach (var vote in votes)
         {
-            var standard = vote.Split(' ')[0][4..].Reverse().ToList();
-            
-            var value = vote.Split(' ')[1].Reverse().ToList();
-
-            var voteValue = 0D;
-            foreach (var (multiplier,s, i) in value.Zip(Repeater(standard), Enumerable.Range(0, 100)))
-            {
-                voteValue += (multiplier - '0') * Math.Pow(s - '0', i);
-            }
-            total += voteValue;
+            var standard = vote.Split(' ')[0][4..].Select(c => c - '0').Reverse().ToList();
+            var value = vote.Split(' ')[1].Select(c => c - '0').Reverse().ToList();
+            total += CalculateValue(standard, value);
         }
         
         return total;
     }
 
-    public static IEnumerable<char> Repeater(List<char> str)
+    public static IEnumerable<int> Repeat(List<int> str)
     {
         while (true)
         {
             foreach(var c in str)
                 yield return c;
         }
+    }
+    
+    private static double CalculateValue(List<int> standard, List<int> value)
+    {
+        var voteValue = 0D;
+        foreach (var (multiplier,s, i) in value.Zip(Repeat(standard), CountUpFrom(0)))
+            voteValue += multiplier * Math.Pow(s, i);
+
+        return voteValue;
     }
     
     public async Task<double> Part3(string filename)
@@ -88,23 +103,6 @@ public class Quest03
         return total;
     }
 
-    private static double CalculateValue(List<int> standard, List<int> value)
-    {
-        var voteValue = 0D;
-        foreach (var (multiplier,s, i) in value.Zip(Repeater(standard), Enumerable.Range(0, 100)))
-        {
-            voteValue += multiplier * Math.Pow(s, i);
-        }
 
-        return voteValue;
-    }
-    
-    public static IEnumerable<int> Repeater(List<int> str)
-    {
-        while (true)
-        {
-            foreach(var c in str)
-                yield return c;
-        }
-    }
+
 }
