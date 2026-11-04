@@ -191,26 +191,39 @@ public class Quest04 : IQuest
             Console.WriteLine($"");
         }
         
-        var totals = scores.Select(l => l.Value ).OrderDescending();
+        var total = scores.Select(l => l.Value )
+                          .OrderDescending()
+                          .RankWithTies()
+                          .Sum(t => t.score * t.rank);
 
-        var total = 0;
-        var position = 1;
-        var nextPosition = 1;
-        var previousScore = -1;
-        foreach (var t in totals)
-        {
-            if (t != previousScore)
-                position = nextPosition;
-
-            total += (position * t);    
-            
-            previousScore = t;
-            nextPosition++;
-        }
-            
-            
-        
-        //6660538
         return total;
+    }
+
+
+}
+
+public static class EnumerableExtensions
+{
+    extension<T>(IEnumerable<T> source) where T:notnull
+    {
+        /// <summary>
+        /// Assumes source is already sorted
+        /// </summary>
+        public IEnumerable<(T score, int rank)> RankWithTies()
+        {
+            var rank = 1;
+            var nextRank = 1;
+            var previousScore = default(T);
+            foreach (var t in source)
+            {
+                if (!t.Equals(previousScore))
+                    rank = nextRank;
+
+                yield return (t, rank);
+            
+                previousScore = t;
+                nextRank++;
+            }
+        }
     }
 }
