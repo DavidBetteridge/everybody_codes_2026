@@ -112,27 +112,12 @@ public class Quest04 : IQuest
             var part1Scores = lines
                 .Where(l => l.Quest == quest && l.Part == 1)
                 .Select(l => new { person = l.Id, time = l.Time })
-                .OrderBy(l => l.time);
-
-            var points = 50;
-            var nextPoints = 50;
-            var previousTime = -1;
+                .OrderBy(l => l.time)
+                .RankWithTies(l => l.time)
+                .Where(l => l.rank <= 50)
+                .Select(l => new { person = l.source.person, points = 51 - l.rank });
             foreach (var score in part1Scores)
-            {
-                if (score.time != previousTime)
-                    points = nextPoints;
-                
-                previousTime = score.time;
-                
-                if (points <= 0) break;
-                
-                scores[score.person] = scores.GetValueOrDefault(score.person) + points;
-                Console.WriteLine($"id={score.person}, time {score.time} : {points} points");
-                
-                
-                nextPoints--;                
-            }
-            
+                scores[score.person] = scores.GetValueOrDefault(score.person) + score.points;
             
             // Part 2
             Console.WriteLine($"Part 2:");
@@ -142,51 +127,34 @@ public class Quest04 : IQuest
                 .Where(l => l.Quest == quest && l.Part != 3)
                 .GroupBy(l => l.Id)
                 .Select(l => new { person = l.Key, time = l.Sum(a=>a.Time) })
-                .OrderBy(l => l.time);
-
-            points = 100;
-            nextPoints = 100;
-            previousTime = -1;
+                .OrderBy(l => l.time)
+                .RankWithTies(l => l.time)
+                .Where(l => l.rank <= 100)
+                .Select(l => new { person = l.source.person, points = 101 - l.rank });
             foreach (var score in part2Scores)
-            {
-                if (score.time != previousTime)
-                    points = nextPoints;
-                
-                previousTime = score.time;
-                
-                if (points <= 0) break;
-                
-                scores[score.person] = scores.GetValueOrDefault(score.person) + points;
-                Console.WriteLine($"id={score.person}, time {score.time} : {points} points");
-                nextPoints--;                
-            }
+                scores[score.person] = scores.GetValueOrDefault(score.person) + score.points;
+
             
             // Part 3
             Console.WriteLine($"Part 3:");
-            var peopleWhoHaveCompletedPart3 = lines.Where(l => l.Quest == quest && l.Part == 3).Select(l => l.Id).ToHashSet();
+            var peopleWhoHaveCompletedPart3 = lines
+                .Where(l => l.Quest == quest && l.Part == 3)
+                .Select(l => l.Id)
+                .ToHashSet();
+            
             var part3Scores = lines
                 .Where(l => peopleWhoHaveCompletedPart3.Contains(l.Id))
                 .Where(l => l.Quest == quest)
                 .GroupBy(l => l.Id)
                 .Select(l => new { person = l.Key, time = l.Sum(a=>a.Time) })
-                .OrderBy(l => l.time);
-
-            points = 150;
-            nextPoints = 150;
-            previousTime = -1;
+                .OrderBy(l => l.time)
+                .RankWithTies(l => l.time)
+                .Where(l => l.rank <= 150)
+                .Select(l => new { person = l.source.person, points = 151 - l.rank });
+            
             foreach (var score in part3Scores)
-            {
-                if (score.time != previousTime)
-                    points = nextPoints;
-                
-                previousTime = score.time;
-                
-                if (points <= 0) break;
-                
-                scores[score.person] = scores.GetValueOrDefault(score.person) + points;
-                Console.WriteLine($"id={score.person}, time {score.time} : {points} points");
-                nextPoints--;                
-            }
+                scores[score.person] = scores.GetValueOrDefault(score.person) + score.points;
+
             
             Console.WriteLine($"");
         }
@@ -207,6 +175,34 @@ public static class EnumerableExtensions
     extension<T>(IEnumerable<T> source) where T:notnull
     {
         /// <summary>
+        /// Assigns a rank to each entry in the source.  Assumes the source is already sorted by the selector
+        /// </summary>
+        /// <param name="selector">The field to rank by</param>
+        /// <returns>A tuple containing the original item and it's rank</returns>
+        /// <example>
+        ///     Source = 1000, 1000, 2000, 2001, 2001
+        ///     Returns = (1000, 1), (1000, 1), (2000, 3),  (2001, 4),  (2001, 4)
+        /// </example>
+        public IEnumerable<(T source, int rank)> RankWithTies<TScore>(Func<T,TScore> selector) where TScore:notnull
+        {
+            var rank = 1;
+            var nextRank = 1;
+            var previousScore = default(TScore);
+            foreach (var t in source)
+            {
+                var score = selector(t);
+                
+                if (!score.Equals(previousScore))
+                    rank = nextRank;
+
+                yield return (t, rank);
+            
+                previousScore = score;
+                nextRank++;
+            }
+        }
+        
+        /// <summary>
         /// Assumes source is already sorted
         /// </summary>
         public IEnumerable<(T score, int rank)> RankWithTies()
@@ -225,5 +221,7 @@ public static class EnumerableExtensions
                 nextRank++;
             }
         }
+        
+
     }
 }

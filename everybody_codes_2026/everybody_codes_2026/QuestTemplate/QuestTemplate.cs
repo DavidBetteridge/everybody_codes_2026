@@ -1,6 +1,6 @@
 namespace everybody_codes_2026.Quest0;
 
-public class Quest0
+public class Quest0 : IQuest
 {
     public async Task<double> Part1(string filename)
     {
