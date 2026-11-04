@@ -47,10 +47,34 @@ public class Quest04 : IQuest
     
     public async Task<double> Part2(string filename)
     {
-        var contents = await File.ReadAllTextAsync(filename);
+        // id=1 quest=1 part=1 time=187
+        var results = await File.ReadAllLinesAsync(filename);
 
-        var total = 0;
+        var lines = new List<Line>();
+        foreach (var result in results)
+        {
+            var segments = result.Split(" ");
+            var id = segments[0].Split('=')[1];
+            var quest = segments[1].Split('=')[1];
+            var part = segments[2].Split('=')[1];
+            var time = segments[3].Split('=')[1];
             
+            lines.Add(new Line
+            {
+                Id = int.Parse(id),
+                Quest = int.Parse(quest),
+                Part = int.Parse(part),
+                Time = int.Parse(time),
+            });
+        }
+
+        var total = lines
+            .GroupBy(line => line.Id)
+            .Select(grp => new { total_time = grp.Sum(l => l.Time), parts = grp.Count() } )
+            .OrderByDescending( a => a.parts).ThenBy(a => a.total_time)
+            .Select((i, j) => i.total_time * (j + 1))
+            .Sum();
+
         return total;
     }
     
