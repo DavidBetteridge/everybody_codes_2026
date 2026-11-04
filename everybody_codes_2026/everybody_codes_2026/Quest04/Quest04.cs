@@ -71,7 +71,7 @@ public class Quest04 : IQuest
         var total = lines
             .GroupBy(line => line.Id)
             .Select(grp => new { total_time = grp.Sum(l => l.Time), parts = grp.Count() } )
-            .OrderByDescending( a => a.parts).ThenBy(a => a.total_time)
+            .OrderByDescending( a => a.parts).ThenByDescending(a => a.total_time)
             .Select((i, j) => i.total_time * (j + 1))
             .Sum();
 
@@ -80,10 +80,137 @@ public class Quest04 : IQuest
     
     public async Task<double> Part3(string filename)
     {
-        var contents = await File.ReadAllTextAsync(filename);
+        // id=1 quest=1 part=1 time=187
+        var results = await File.ReadAllLinesAsync(filename);
+
+        var lines = new List<Line>();
+        foreach (var result in results)
+        {
+            var segments = result.Split(" ");
+            var id = segments[0].Split('=')[1];
+            var quest = segments[1].Split('=')[1];
+            var part = segments[2].Split('=')[1];
+            var time = segments[3].Split('=')[1];
+            
+            lines.Add(new Line
+            {
+                Id = int.Parse(id),
+                Quest = int.Parse(quest),
+                Part = int.Parse(part),
+                Time = int.Parse(time),
+            });
+        }
+
+        var quests = lines.Select(l => l.Quest).Distinct().Order().ToList();
+        var scores = new Dictionary<int, int>();  //id=>score
+        foreach (var quest in quests)
+        {
+            Console.WriteLine($"Quest {quest}");
+            
+            // Part 1
+            Console.WriteLine($"Part 1:");
+            var part1Scores = lines
+                .Where(l => l.Quest == quest && l.Part == 1)
+                .Select(l => new { person = l.Id, time = l.Time })
+                .OrderBy(l => l.time);
+
+            var points = 50;
+            var nextPoints = 50;
+            var previousTime = -1;
+            foreach (var score in part1Scores)
+            {
+                if (score.time != previousTime)
+                    points = nextPoints;
+                
+                previousTime = score.time;
+                
+                if (points <= 0) break;
+                
+                scores[score.person] = scores.GetValueOrDefault(score.person) + points;
+                Console.WriteLine($"id={score.person}, time {score.time} : {points} points");
+                
+                
+                nextPoints--;                
+            }
+            
+            
+            // Part 2
+            Console.WriteLine($"Part 2:");
+            var peopleWhoHaveCompletedPart2 = lines.Where(l => l.Quest == quest && l.Part == 2).Select(l => l.Id).ToHashSet();
+            var part2Scores = lines
+                .Where(l => peopleWhoHaveCompletedPart2.Contains(l.Id))
+                .Where(l => l.Quest == quest && l.Part != 3)
+                .GroupBy(l => l.Id)
+                .Select(l => new { person = l.Key, time = l.Sum(a=>a.Time) })
+                .OrderBy(l => l.time);
+
+            points = 100;
+            nextPoints = 100;
+            previousTime = -1;
+            foreach (var score in part2Scores)
+            {
+                if (score.time != previousTime)
+                    points = nextPoints;
+                
+                previousTime = score.time;
+                
+                if (points <= 0) break;
+                
+                scores[score.person] = scores.GetValueOrDefault(score.person) + points;
+                Console.WriteLine($"id={score.person}, time {score.time} : {points} points");
+                nextPoints--;                
+            }
+            
+            // Part 3
+            Console.WriteLine($"Part 3:");
+            var peopleWhoHaveCompletedPart3 = lines.Where(l => l.Quest == quest && l.Part == 3).Select(l => l.Id).ToHashSet();
+            var part3Scores = lines
+                .Where(l => peopleWhoHaveCompletedPart3.Contains(l.Id))
+                .Where(l => l.Quest == quest)
+                .GroupBy(l => l.Id)
+                .Select(l => new { person = l.Key, time = l.Sum(a=>a.Time) })
+                .OrderBy(l => l.time);
+
+            points = 150;
+            nextPoints = 150;
+            previousTime = -1;
+            foreach (var score in part3Scores)
+            {
+                if (score.time != previousTime)
+                    points = nextPoints;
+                
+                previousTime = score.time;
+                
+                if (points <= 0) break;
+                
+                scores[score.person] = scores.GetValueOrDefault(score.person) + points;
+                Console.WriteLine($"id={score.person}, time {score.time} : {points} points");
+                nextPoints--;                
+            }
+            
+            Console.WriteLine($"");
+        }
+        
+        var totals = scores.Select(l => l.Value ).OrderDescending();
 
         var total = 0;
+        var position = 1;
+        var nextPosition = 1;
+        var previousScore = -1;
+        foreach (var t in totals)
+        {
+            if (t != previousScore)
+                position = nextPosition;
+
+            total += (position * t);    
             
+            previousScore = t;
+            nextPosition++;
+        }
+            
+            
+        
+        //6660538
         return total;
     }
 }
