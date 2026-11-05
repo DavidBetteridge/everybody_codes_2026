@@ -15,8 +15,8 @@ using everybody_codes_2026.Quest05;
 
 var runner = new Quest05();
 // await RunPart1(5, runner, 137, 1133);
-await RunPart2(5, runner, 69, 1433);
-// await RunPart3(5, runner, 2998, 6644780);
+// await RunPart2(5, runner, 69, 1433);
+await RunPart3(5, runner, 14, 9148);
 
 return;
 const string rootFolder = "/Users/davidbetteridge/everybody_codes_2026/everybody_codes_2026/everybody_codes_2026";
