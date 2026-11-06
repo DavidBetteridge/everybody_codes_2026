@@ -27,7 +27,7 @@ using everybody_codes_2026.Quest07;
 
 var runner = new Quest07();
 await RunPart1(7, runner, 102, 258);
-// await RunPart2(7, runner, 6, 841);
+await RunPart2(7, runner, 1214633, 133286441);
 // await RunPart3(7, runner, 3, 1636);
 
 return;

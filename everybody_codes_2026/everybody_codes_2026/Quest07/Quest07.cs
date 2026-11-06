@@ -53,10 +53,33 @@ public class Quest07 : IQuest
 
     public async Task<double> Part2(string filename)
     {
-        var contents = await File.ReadAllTextAsync(filename);
+        //id=1, energy=5, connections=2,5,7
+        var lines = await File.ReadAllLinesAsync(filename);
 
-        var total = 0;
-            
+        var clouds = new Dictionary<int, Cloud>();
+        foreach (var line in lines)
+        {
+            var parts = line.Split(", ");
+            var id = int.Parse(parts[0].Split('=')[1]);
+            var energy = int.Parse(parts[1].Split('=')[1]);
+            var connections = parts[2].Split('=')[1].Split(',').Select(int.Parse).ToList();
+
+            clouds[id] = new Cloud
+            {
+                Connections = connections,
+                Energy = energy,
+                Id = id
+            };
+        }
+
+        // Find the cloud with the most connections
+        var start = clouds.MaxBy(c => c.Value.Connections.Count);
+
+        SendImpulse(clouds, start.Key, 10);
+        
+        
+        var total = clouds.Sum(c => c.Value.Energy);
+
         return total;
     }
     
