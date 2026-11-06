@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="everybody_codes_2026/everybody_codes_2026.csproj" />
+  <Project Path="GridVisualizer/GridVisualizer.csproj" />
 </Solution>
