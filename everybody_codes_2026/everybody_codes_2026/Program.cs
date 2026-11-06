@@ -34,7 +34,7 @@ using everybody_codes_2026.Quest08;
 var runner = new Quest08();
 await RunPart1(8, runner, 32, 174);
 await RunPart2(8, runner, 187, 1046);
-// await RunPart3(8, runner, 187, 28143265);
+await RunPart3(8, runner, 899889, 899243);
 
 return;
 const string rootFolder = "/Users/davidbetteridge/everybody_codes_2026/everybody_codes_2026/everybody_codes_2026";
