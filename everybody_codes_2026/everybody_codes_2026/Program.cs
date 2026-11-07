@@ -38,8 +38,8 @@ using everybody_codes_2026.Quest09;
 // await RunPart3(8, runner, 899889, 899243);
 
 var runner = new Quest09();
-await RunPart1(9, runner, 27, 249);
-// await RunPart2(9, runner, 197, 1046);
+// await RunPart1(9, runner, 27, 249);
+await RunPart2(9, runner, 42, 15481);
 //await RunPart3(8, runner, 899889, 899243);
 
 return;
