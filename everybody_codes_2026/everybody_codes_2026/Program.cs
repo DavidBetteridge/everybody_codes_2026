@@ -44,8 +44,8 @@ using everybody_codes_2026.Quest10;
 //await RunPart3(9, runner, 0, 899243);
 
 var runner = new Quest10();
-await RunPart1(10, runner, 29, 249);
-// await RunPart2(10, runner, 42, 15481);
+await RunPart1(10, runner, 29, 50);
+await RunPart2(10, runner, 50000, 136833);
 //await RunPart3(10, runner, 0, 899243);
 
 
