@@ -6,6 +6,7 @@ using everybody_codes_2026.Quest06;
 using everybody_codes_2026.Quest07;
 using everybody_codes_2026.Quest08;
 using everybody_codes_2026.Quest09;
+using everybody_codes_2026.Quest10;
 
 // var runner = new Quest03();
 // await RunPart1(3, runner, 1478, 15828);
@@ -37,10 +38,16 @@ using everybody_codes_2026.Quest09;
 // await RunPart2(8, runner, 187, 1046);
 // await RunPart3(8, runner, 899889, 899243);
 
-var runner = new Quest09();
+// var runner = new Quest09();
 // await RunPart1(9, runner, 27, 249);
-await RunPart2(9, runner, 42, 15481);
-//await RunPart3(8, runner, 899889, 899243);
+// await RunPart2(9, runner, 42, 15481);
+//await RunPart3(9, runner, 0, 899243);
+
+var runner = new Quest10();
+await RunPart1(10, runner, 29, 249);
+// await RunPart2(10, runner, 42, 15481);
+//await RunPart3(10, runner, 0, 899243);
+
 
 return;
 const string rootFolder = "/Users/davidbetteridge/everybody_codes_2026/everybody_codes_2026/everybody_codes_2026";
